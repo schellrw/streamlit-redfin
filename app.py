@@ -6,6 +6,7 @@ import folium
 import geopandas as gpd
 import streamlit as st
 from streamlit_folium import folium_static
+import os
 
 @st.cache_data
 def read_csv(path):
@@ -17,10 +18,10 @@ housing_price_df = housing_price_df[(housing_price_df['period_begin']>='2020-01-
 
 @st.cache_data
 def read_file(path):
-    return gpd.read_file(path)
+    return gpd.read_file(path, engine='pyogrio')
 
 #Read the geojson file
-gdf = read_file('./input/georef-united-states-of-america-state.geojson')
+gdf = read_file(os.path.join('input', 'georef-united-states-of-america-state.geojson'))
 
 #Merge the housing market data and geojson file into one dataframe
 df_final = gdf.merge(housing_price_df, left_on="ste_stusps_code", right_on="state_code", how="outer").reset_index(drop=True) #, inplace=True)
